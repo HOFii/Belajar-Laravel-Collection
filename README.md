@@ -302,7 +302,314 @@
             "Kiana" => 80
         ], $result2->all());
     }
+    ```
 
+---
+
+### 11. Testing
+
+-   Testing adalah operasi untuk mengecek isi data `collection`,
+
+-   Hasil dari testing adalah _boolean_, dimana _true_ jika sesuai kondisi dan _false_ jika tidak sesuai kondisi.
+
+-   Testing operations
+
+    ![testing](img/testing.png)
+
+-   Kode testing
+
+    ```PHP
+    public function testTesting()
+    {
+        $collection = collect(["Gusti", "Alifiraqsha", "Akbar"]);
+        $this->assertTrue($collection->contains("Gusti"));
+        $this->assertTrue($collection->contains(function ($value, $key) {
+            return $value == "Akbar";
+        }));
+    }
+    ```
+
+---
+
+### 12. Grouping
+
+-   Grouping adalah operasi untuk menggabungkan (grouping) kan element-element yang ada di `coleection`.
+
+-   Grouping operations
+
+    ![grouping](img/group.png)
+
+-   Kode grouping
+
+    ```PHP
+    public function testGrouping()
+    {
+        $collection = collect([
+            [
+                "name" => "Gusti",
+                "department" => "IT"
+            ],
+            [
+                "name" => "Kiana",
+                "department" => "IT"
+            ],
+            [
+                "name" => "Elaina",
+                "department" => "HR"
+            ]
+        ]);
+
+        $result = $collection->groupBy("department");
+
+        assertEquals([
+            "IT" => collect([
+                [
+                    "name" => "Gusti",
+                    "department" => "IT"
+                ],
+                [
+                    "name" => "Kiana",
+                    "department" => "IT"
+                ]
+            ]),
+            "HR" => collect([
+                [
+                    "name" => "Elaina",
+                    "department" => "HR"
+                ]
+            ])
+        ], $result->all());
+
+        $result = $collection->groupBy(function ($value, $key) {
+            return strtolower($value["department"]);
+        });
+
+        assertEquals([
+            "it" => collect([
+                [
+                    "name" => "Gusti",
+                    "department" => "IT"
+                ],
+                [
+                    "name" => "Kiana",
+                    "department" => "IT"
+                ]
+            ]),
+            "hr" => collect([
+                [
+                    "name" => "Elaina",
+                    "department" => "HR"
+                ]
+            ])
+        ], $result->all());
+    }
+    ```
+
+---
+
+### 13. Slicing
+
+-   Slicing adalah operasi untuk mengambil sebagian data di `collection`.
+
+-   Slicing operations
+
+    ![slicing](img/slicing.png)
+
+-   Kode slicing
+
+    ```PHP
+    public function testSlicing()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $result = $collection->slice(3); // mulai mengambil dari data yang ke 3 sampai ke 9
+
+        $this->assertEqualsCanonicalizing([4, 5, 6, 7, 8, 9], $result->all());
+
+        $result = $collection->slice(3, 2); // megambil data dari yang ke 3, tapi hanya 2 data ke belakang
+        $this->assertEqualsCanonicalizing([4, 5], $result->all());
+    }
+    ```
+
+---
+
+### 14. Take & Skip
+
+-   Selain menggunakan slicing, bisa juga menggunakan opearsi take & skip unutk mengambil sebagina data.
+
+-   Take operations
+
+    ![take](img/take.png)
+
+-   Kode take
+
+    ```PHP
+    public function testTake()
+    {
+        $collection = collect([1, 2, 3, 1, 2, 3, 1, 2, 3]);
+
+        $result = $collection->take(3);
+        $this->assertEqualsCanonicalizing([1, 2, 3], $result->all());
+
+        $result = $collection->takeUntil(function ($value, $key) {
+            return $value == 3;
+        });
+        $this->assertEqualsCanonicalizing([1, 2], $result->all());
+
+        $result = $collection->takeWhile(function ($value, $key) {
+            return $value < 3;
+        });
+        $this->assertEqualsCanonicalizing([1, 2], $result->all());
+    }
+    ```
+
+-   Skip operations
+
+    ![skip](img/skip.png)
+
+-   Kode skip
+
+    ```PHP
+    public function testSkip()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+        $result = $collection->skip(3);
+        $this->assertEqualsCanonicalizing([4, 5, 6, 7, 8, 9], $result->all());
+
+        $result = $collection->skipUntil(function ($value, $key) {
+            return $value == 3;
+        });
+        $this->assertEqualsCanonicalizing([3, 4, 5, 6, 7, 8, 9], $result->all());
+
+        $result = $collection->skipWhile(function ($value, $key) {
+            return $value < 3;
+        });
+        $this->assertEqualsCanonicalizing([3, 4, 5, 6, 7, 8, 9], $result->all());
+    }
+    ```
+
+---
+
+### 15. Chuncked
+
+-   Chunked adalah operasi untuk memotong `collection` menjadi beberapa `collection`
+
+-   Chunked operations
+
+    ![chunked](img/chunked.png)
+
+-   Kode chuncked
+
+    ```PHP
+    public function testChunk()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+        $result = $collection->chunk(3);
+
+        $this->assertEqualsCanonicalizing([1, 2, 3], $result->all()[0]->all());
+        $this->assertEqualsCanonicalizing([4, 5, 6], $result->all()[1]->all());
+        $this->assertEqualsCanonicalizing([7, 8, 9], $result->all()[2]->all());
+        $this->assertEqualsCanonicalizing([10], $result->all()[3]->all());
+    }
+    ```
+
+---
+
+### 16. Retrive
+
+-   Retrive adalah operasi untuk mengambil data di `collection`, ada dua operasi yaitu first & last.
+
+-   First operations
+
+    ![first](img/first.png)
+
+-   Kode dengan first
+
+    ```PHP
+     public function testFirst()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $result = $collection->first();
+        $this->assertEquals(1, $result);
+
+        $result = $collection->first(function ($value, $key) {
+            return $value > 5;
+        });
+        $this->assertEquals(6, $result);
+    }
+    ```
+
+-   Last operations
+
+    ![last](img/last.png)
+
+-   Kode dengan last
+
+    ```PHP
+     public function testLast()
+    {
+
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $result = $collection->last();
+        $this->assertEquals(9, $result);
+
+        $result = $collection->last(function ($value, $key) {
+            return $value < 5;
+        });
+        $this->assertEquals(4, $result);
+    }
+    ```
+
+---
+
+### 17. Random
+
+-   Random adalah operasi untuk mengambil data di collection dengan posisi random atau acak.
+
+-   Random operations
+
+    ![random](img/random.png)
+
+-   Kode random
+
+    ```PHP
+    public function testRandom()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $result = $collection->random();
+
+        $this->assertTrue(in_array($result, [1, 2, 3, 4, 5, 6, 7, 8, 9]));
+
+        $result = $collection->random(5);
+        $this->assertEqualsCanonicalizing([1,2,3,4,5], $result->all());
+    }
+    ```
+
+---
+
+### 18. Checking Existence
+
+-   Checking existence merupaka operasi untuk mengecek apakah terdapat data yang dicari di `collection`.
+
+-   Checking existence operations
+
+    ![check](img/chacking.png)
+
+-   Kode checking
+
+    ```PHP
+    public function testCheckingExistence()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $this->assertTrue($collection->isNotEmpty());
+        $this->assertFalse($collection->isEmpty());
+        $this->assertTrue($collection->contains(1));
+        $this->assertFalse($collection->contains(10));
+        $this->assertTrue($collection->contains(function ($value, $key) {
+            return $value == 8;
+        }));
+    }
     ```
 
 ---
