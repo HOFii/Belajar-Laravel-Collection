@@ -1,66 +1,318 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LARAVEL BLADE TEMPLATE
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## POINT UTAMA
 
-## About Laravel
+### 1. Instalasi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   Minimal PHP versi 8 atau lebih,
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   Composer versi 2 atau lebih,
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   Lalu pada cmd ketikan `composer create-project laravel/laravel=v10.0.3 belajar-laravel-collection`.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2. Membuat Collection
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+-   Untuk membuat `collection`, laravel sudah menyediakan global function `collect(array)` yang digunakan untuk merubah tipe data array
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-   Kode laravel `collection`
 
-## Laravel Sponsors
+    ```PHP
+     public function testCreateCollection()
+    {
+        $collection = collect([1, 2, 3]);
+        $this->assertEqualsCanonicalizing([1, 2, 3], $collection->all());
+    }
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+---
 
-### Premium Partners
+### 3. for Each
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+-   `Collection` adalah struktur data turunan dari itearble PHP,
 
-## Contributing
+-   Dengan demikian, kita bisa melakukan iterasi(operasi berulang) data `collection` menggunakan perintah for PHP
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-   Kode for each
 
-## Code of Conduct
+    ```PHP
+    public function testForEach()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        foreach ($collection as $key => $value) {
+            $this->assertEquals($key + 1, $value);
+        }
+    }
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+### 4. Manipulasi Collection
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+-   Kita bisa memanipulasi data menggunakan method yang terdapat di class `collection`
 
-## License
+-   `Collection` operations
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    ![collections](img/collection.png)
+
+-   Kode manipulasi `collection`
+
+    ```PHP
+    public function testCrud()
+    {
+        $collection = collect([]);
+        $collection->push(1, 2, 3);
+        $this->assertEqualsCanonicalizing([1, 2, 3], $collection->all());
+
+        $result = $collection->pop();
+        $this->assertEquals(3, $result);
+        $this->assertEqualsCanonicalizing([1, 2], $collection->all());
+    }
+    ```
+
+---
+
+### 5. Mapping
+
+-   Mapping adalah transformasi(mengubah bentuk data) menjadi data lain,
+
+-   Mapping membutuhkan _function_ sebagai parameter yang digunakan untuk membentuk data lainnya.
+
+-   Mapping opetations
+
+    ![mapping](img/mapping.png)
+
+-   Kode mapping
+
+    ```PHP
+    <?php
+
+    namespace App\Data;
+
+    class Person
+    {
+
+        var string $name;
+
+        public function __construct(string $name){
+            $this->name = $name;
+        }
+    }
+    ```
+
+-   Unit test mapping
+
+    ```PHP
+    public function testMapInto()
+    {
+        $collection = collect(["Gusti"]);
+        $result = $collection->mapInto(Person::class);
+        $this->assertEquals([new Person("Gusti")], $result->all());
+    }
+    ```
+
+-   Kode mapping group
+
+    ```PHP
+     public function testMapToGroups()
+    {
+        $collection = collect([
+            [
+                "name" => "Gusti",
+                "department" => "IT"
+            ],
+            [
+                "name" => "Kiana",
+                "department" => "IT"
+            ],
+            [
+                "name" => "Elaina",
+                "department" => "HR"
+            ]
+        ]);
+     $result = $collection->mapToGroups(function ($person) {
+            return [
+                $person["department"] => $person["name"]
+            ];
+        });
+    }
+    ```
+
+---
+
+### 6. Zipping
+
+-   Zipping adalah transformasi yang digunakan untuk menggabungkan dua buah `collection`.
+
+-   Zipping operations
+
+    ![zipping](img/zipping.png)
+
+-   Kode zipping
+
+    ```PHP
+    public function testZip()
+    {
+        $collection1 = collect([1, 2, 3]);
+        $collection2 = collect([4, 5, 6]);
+        $collection3 = $collection1->zip($collection2);
+
+        $this->assertEquals([
+            collect([1, 4]),
+            collect([2, 5]),
+            collect([3, 6]),
+        ], $collection3->all());
+    }
+    ```
+
+---
+
+### 7. Flattening
+
+-   Flattening adalah operasi transformasi untuk _nested_ `collection` menjadi flat
+
+-   Flattening operations
+
+    ```PHP
+    public function testCollapse()
+    {
+        $collection = collect([
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ]);
+        $result = $collection->collapse();
+        $this->assertEqualsCanonicalizing([1, 2, 3, 4, 5, 6, 7, 8, 9], $result->all());
+
+    }
+    ```
+
+-   Kode flat map
+
+    ```PHP
+    public function testFlatMap()
+    {
+        $collection = collect([
+            [
+                "name" => "Gusti",
+                "hobbies" => ["Coding", "Gaming"]
+            ],
+            [
+                "name" => "Kiana",
+                "hobbies" => ["Reading", "Writing"]
+            ],
+        ]);
+        $result = $collection->flatMap(function ($item) {
+            $hobbies = $item["hobbies"];
+            return $hobbies;
+        });
+
+        $this->assertEqualsCanonicalizing(["Coding", "Gaming", "Reading", "Writing"], $result->all());
+    }
+    ```
+
+---
+
+### 8. String Representation
+
+-   String Representation adalah operasi transformasi untuk mengubah `collection` menjadi _string_.
+
+-   String Representation operations
+
+    ![stringRep](img/stringRep.png)
+
+-   Kode String Representation
+
+    ```PHP
+     public function testStringRepresentation()
+    {
+        $collection = collect(["Gusti", "Alifiraqsha", "Akbar"]);
+
+        $this->assertEquals("Gusti-Alifiraqsha-Akbar", $collection->join("-"));
+        $this->assertEquals("Gusti-Alifiraqsha_Akbar", $collection->join("-", "_"));
+        $this->assertEquals("Gusti, Alifiraqsha and Akbar", $collection->join(", ", " and "));
+    }
+    ```
+
+---
+
+### 9. Filtering
+
+-   Filtering membutuhkan _function_ sebagai parameter,
+
+-   Filtering dalam Laravel digunakan untuk membatasi data berdasarkan kriteria tertentu. Dalam konteks Laravel, ini sering kali melibatkan penggunaan _Query Builder_ atau _Eloquent ORM_ untuk membuat query yang mencari data yang memenuhi kriteria yang ditetapkan.
+
+-   Filtering operations
+
+    ![filtering](img/filtering.png)
+
+-   Kode filtering
+
+    ```PHP
+    public function testFilter()
+    {
+        $collection = collect([
+            "Gusti" => 100,
+            "Kiana" => 80,
+            "Elaina" => 90
+        ]);
+
+        $result = $collection->filter(function ($value, $key) {
+            return $value >= 90;
+        });
+
+        $this->assertEquals([
+            "Gusti" => 100,
+            "Elaina" => 90
+        ], $result->all());
+    }
+    ```
+
+---
+
+### 10. Partitioning
+
+-   Denagn partitioning kita bisa mendapatkan dua `collection` yang terdiri dari `collection` yang masuk dan tidak masuk filter.
+
+-   Partitionig operations
+
+    ![partitionning](img/partitioning.png)
+
+-   Kode partition
+
+    ```PHP
+    public function testPartition()
+    {
+        $collection = collect([
+            "Gusti" => 100,
+            "Kiana" => 80,
+            "Elaina" => 90
+        ]);
+
+        [$result1, $result2] = $collection->partition(function ($value, $key) {
+            return $value >= 90;
+        });
+
+        $this->assertEquals([
+            "Gusti" => 100,
+            "Elaina" => 90
+        ], $result1->all());
+        $this->assertEquals([
+            "Kiana" => 80
+        ], $result2->all());
+    }
+
+    ```
+
+---
+
+## PERTANYAAN & CATATAN TAMBAHAN
+
+-   Laravel collections adalah sekumpulan method yang kuat dan mudah digunakan untuk bekerja dengan array dan data lainnya.
+
+---
+
+### KESIMPULAN
+
+-
