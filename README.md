@@ -614,6 +614,124 @@
 
 ---
 
+### 19. Ordering
+
+-   Ordering adalah operasi untuk melakukan pengurutan data di `conllection`.
+
+-   Ordering operations
+
+    ![ordering](img/ordering.png)
+
+-   Kode ordering
+
+    ```PHP
+    public function testOrdering()
+    {
+        $collection = collect([1, 3, 2, 4, 6, 5, 8, 7, 9]);
+        $result = $collection->sort();
+        $this->assertEqualsCanonicalizing([1, 2, 3, 4, 5, 6, 7, 8, 9], $result->all());
+
+        $result = $collection->sortDesc();
+        $this->assertEqualsCanonicalizing([9, 8, 7, 6, 5, 4, 3, 2, 1], $result->all());
+    }
+    ```
+
+---
+
+### 20. Aggregate
+
+-   Aggregate di Laravel digunakan untuk melakukan operasi agregasi pada data dalam database.
+
+-   Operasi agregasi adalah operasi yang melibatkan pengumpulan nilai-nilai dari beberapa baris data dan menghasilkan satu nilai hasil, seperti menghitung jumlah, rata-rata, nilai maksimum, atau nilai minimum dari sebuah kolom dalam tabel.
+
+-   Aggregate operations
+
+    ![aggregate](img/aggregate.png)
+
+-   Kode aggregate
+
+    ```PHP
+      public function testAggregate()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $result = $collection->sum();
+        $this->assertEquals(45, $result);
+
+        $result = $collection->avg();
+        $this->assertEquals(5, $result);
+
+        $result = $collection->min();
+        $this->assertEquals(1, $result);
+
+        $result = $collection->max();
+        $this->assertEquals(9, $result);
+    }
+    ```
+
+---
+
+### 21. Reduce
+
+-   Reduce merupakan operasi yang dilakukan pada setiap data yang ada di `collection` secara sequential dan mengembalikan hasil,
+
+-   Cara membuat aggregate secara manula bisa menggunakan reduce,
+
+-   Hasil dari reduce sebelumnya akan digunakan di itersi selanjutnya.
+
+-   Reduce operations
+
+    ![reduce](img/reduce.png)
+
+-   Kode reduce
+
+    ```PHP
+    public function testReduce()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $result = $collection->reduce(function ($carry, $item) {
+            return $carry + $item;
+        });
+        $this->assertEquals(45, $result);
+
+        // reduce(1,2) = 3
+        // reduce(3,3) = 6
+        // reduce(6,4) = 10
+        // reduce(10,5) = 15
+        // reduce(15,6) = 21
+        // reduce(21,7) = 28
+    }
+    ```
+
+---
+
+### 22. Lazy Collection
+
+-   Keuntungan membuat lazy collection adalah kita bisa melakukan manipulasi data besar, tanpa takut semua operasi dieksekusi sebelum dibutuhkan.
+
+-   Saat membuat lazy collection kita harus menggunakan PHP generator.
+
+-   Kode lazy
+
+    ```PHP
+    public function testLazyCollection()
+    {
+
+        $collection = LazyCollection::make(function () {
+            $value = 0;
+
+            while (true) {
+                yield $value;
+                $value++;
+            }
+        });
+
+        $result = $collection->take(10);
+        $this->assertEqualsCanonicalizing([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], $result->all());
+    }
+    ```
+
+---
+
 ## PERTANYAAN & CATATAN TAMBAHAN
 
 -   Laravel collections adalah sekumpulan method yang kuat dan mudah digunakan untuk bekerja dengan array dan data lainnya.
