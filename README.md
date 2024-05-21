@@ -28,7 +28,7 @@
 
 ---
 
-### 3. for Each
+### 3. For Each
 
 -   `Collection` adalah struktur data turunan dari itearble PHP,
 
